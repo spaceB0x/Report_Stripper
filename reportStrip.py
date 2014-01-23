@@ -34,12 +34,15 @@ def main():
 	if ((options.filename==None) | (options.output==None)):
 		os.system('reportStrip.py --help')
 		exit(0)
-
+	
 	###Open Files###
-	temp = open('temp.txt', 'rb')
-	wfile = open(options.output,"w")
-	os.system('pdf2txt.py -o temp.txt %s' % options.filename)
-
+	f = ("%s.txt" % str(options.output)) #append '.txt.'
+	wfile = open(f,'w')
+	rfile= options.filename 
+	os.system('python pdf2txt.py -o temp.txt "%s"' %rfile)
+	
+	
+	temp = open('temp.txt','rb')
 	
 	###STRIP###
 	print 'Parsing.....'
@@ -51,6 +54,7 @@ def main():
 	print '\n DONE!'
 	temp.close()
 	wfile.close()
+	#rfile.close()
 	
 	exit(0)
 
