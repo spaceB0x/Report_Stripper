@@ -8,8 +8,11 @@
 # Jan. 20,2013
 # 
 # Simple little program
-# Takes an input pdf, and searches for line containing "Subject" information
+# Takes an input pdf, and searches for line containing "Subject" information from emails
+# Also collects any IP address in the document as well as an 'Attempt' and collecting
+# domain information
 # Then outputs a list of found items to a file.
+# Oh yeah, and also formats the info for use in searchcriteria for MimeCast, SPLUNK, etc.
 #
 # Utilizes the tool pdf2txt.py included in "pdfminer" module (Thanks)
 # 
@@ -19,6 +22,7 @@
 import os
 import optparse
 import re
+import time
 
 def main():
 
@@ -123,5 +127,6 @@ def main():
 
 
 if __name__=='__main__':
+	t0=time.clock()
 	main()
-
+	print time.clock()-t0
