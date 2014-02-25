@@ -45,61 +45,77 @@ def main():
 	
 	temp = open('temp.txt','rb')
 	
-	###STRIP###
+	##Declare lists##
+	subs=[]
+	ips=[]
+	domains=[]
 	
-	wfile.write('Suspicious Subject lines: \n')             #write Subject list
+	
+	
+	### STRIP ####################################
+	##############################################
+	
 	for line in temp:
-  		if (line.find('Subject:') != -1):
-				wfile.write(line.lstrip("Subject:").replace('!', ' '))			
-	temp.close()
-	temp = open('temp.txt', 'rb')
-							
-	wfile.write('\n\n\n	Formatted for Mimecast:\n')				#write formatted list for mimecast
-	fmtString = ''
-	for line in temp:
+		#fill subs[]
 		if (line.find('Subject:') != -1):
-				fmtString=(fmtString +'"'+(line.lstrip("Subject:").lstrip('\n').lstrip('\r').replace('!',' ')) +'"'+' OR ')
-	wfile.write('%s' % fmtString)
-	temp.close()
-	temp = open('temp.txt', 'rb')
+				subs.append(line.lstrip("Subject:").lstrip("\r\n").replace('!', ' '))			
+		#fill ips[]
+		foundIPs = re.findall(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', line)
+		if foundIPs:
+			for ip in foundIPs:
+				ips.append('%s\n' %ip)			
+		#fill domains[]
+		doms= re.findall(r'\@?[\w]+.com',line)
+		if doms:
+			for d in doms:
+				d=d.replace('!','.')	
+				domains.append('%s\n' %d)	
+	temp.close()	
+		
 
-	wfile.write('\n\n\n')									#print IPs using regex
+			
+	### PRINT ####################################
+	##############################################
+	print '\nSuspicious Subject lines: \n'   #write Subject list
+	wfile.write('Suspicious Subject lines: \n')
+	for s in subs:
+		wfile.write(s)
+		print s
+		
+	print '\n\n\nFormatted for Mimecast:\n'	#write formatted list for mimecast
+	wfile.write('\n\n\nFormatted for Mimecast:\n')
+	fmt=''
+	for s in subs:
+		sa=s.strip('\r\n')
+		sb='"'+sa+'"'+' OR '
+		fmt+=sb
+	print fmt
+	wfile.write(fmt)
+
+	
+	print '\n\n\n'							#print IPs using regex
+	print 'Suspicious IP addresses: \n'
+	wfile.write('\n\n\n')
 	wfile.write('Suspicious IP addresses: \n')
-	for line in temp:
-		foundIPs = re.findall(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', line)
-		if foundIPs:
-			for ip in foundIPs:
-				wfile.write('%s\n' %ip)
-	temp.close()
-	temp = open('temp.txt', 'rb')
-				
-	wfile.write('\n\n\n')									#write formatted IPs for SW/Splunk
-	wfile.write('IPs Formatted for Splunk: \n')
-	for line in temp:
-		foundIPs = re.findall(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', line)
-		if foundIPs:
-			for ip in foundIPs:
-				wfile.write('%s\n' %ip)
-	
+	fmt=''
+	for i in ips:
+		wfile.write(i)
+		print i
 		
-	wfile.write('\n\n\n')									#print Suspect domains.
+	print '\n\n\n'									#write formatted IPs for SW/Splunk
+	print 'IPs Formatted for Splunk: \n'
+	
+	
+	print '\n\n\n'									#print Suspect domains.
+	print 'Suspicious Domains: \n'
+	wfile.write('\n\n\n')
 	wfile.write('Suspicious Domains: \n')
+	for d in domains:
+		wfile.write(d)
+		print d
 	
-	temp.close()
-	temp = open('temp.txt', 'rb')
-	
-	for line in temp:
-		domains = re.findall(r'\@?[\w.]+.com',line)
-		if domains:
-			for d in domains:
-				d=d.replace('!','.')
-				wfile.write('%s\n' %d)
-		
-	wfile.write('\n\n\n')									#write formatted for Mimecast
-	wfile.write('Domains formatted for Mimecast: \n')		
 	
 	print '\n DONE!'
-	temp.close()
 	wfile.close()
 	#rfile.close()
 	
