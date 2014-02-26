@@ -9,13 +9,14 @@
 # 
 # Simple little program
 # Takes an input pdf, and searches for line containing "Subject" information from emails
-# Also collects any IP address in the document as well as an 'Attempt' and collecting
+# Also collects any IP address in the document as well as an 'Attempt' at collecting
 # domain information
 # Then outputs a list of found items to a file.
 # Oh yeah, and also formats the info for use in searchcriteria for MimeCast, SPLUNK, etc.
 #
 # Utilizes the tool pdf2txt.py included in "pdfminer" module (Thanks)
-# 
+#
+# Last Updated: 
 ################################################################################
 
 
@@ -86,7 +87,7 @@ def main():
 		wfile.write(s)
 		print s
 		
-	print '\n\n\nFormatted for Mimecast:\n'	#write formatted list for mimecast
+	print '\n\n\nFormatted for Mimecast:\n'				#write subjects formatted list for mimecast
 	wfile.write('\n\n\nFormatted for Mimecast:\n')
 	fmt=''
 	for s in subs:
@@ -108,8 +109,17 @@ def main():
 		
 	print '\n\n\n'									#write formatted IPs for SW/Splunk
 	print 'IPs Formatted for Splunk: \n'
-	
-	
+	wfile.write('\n\n\n')
+	wfile.write('IPs Formatted for Splunk: \n')
+	fmt=''
+	for i in ips:
+		sa =i.strip('\r\n')
+		sb= sa +' OR '
+		fmt+=sb
+	print fmt
+	wfile.write(fmt)
+		
+		
 	print '\n\n\n'									#print Suspect domains.
 	print 'Suspicious Domains: \n'
 	wfile.write('\n\n\n')
